@@ -1,0 +1,1774 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>သီတင်းကျွတ် Surprise 🎁</title>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family:'Pyidaungsu','Myanmar Text',sans-serif;
+    background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+    min-height:100vh;
+    overflow-x:hidden;
+    color:#fff;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    padding:30px 14px 60px;
+    position:relative;
+  }
+
+  .star {
+    position:fixed; background:#fff; border-radius:50%;
+    animation:twinkle 3s infinite; z-index:1; pointer-events:none;
+  }
+  @keyframes twinkle {
+    0%,100%{opacity:.2; transform:scale(1);}
+    50%    {opacity:1;  transform:scale(1.4);}
+  }
+
+  .moon {
+    position:fixed; top:40px; right:40px;
+    width:80px; height:80px; border-radius:50%;
+    background:radial-gradient(circle at 30% 30%, #fffbe6, #ffe066 70%);
+    box-shadow:0 0 40px #ffe066, 0 0 80px #ffcc00;
+    animation:moonGlow 4s ease-in-out infinite;
+    z-index:1; pointer-events:none;
+  }
+  @keyframes moonGlow {
+    0%,100%{box-shadow:0 0 40px #ffe066, 0 0 80px #ffcc00;}
+    50%    {box-shadow:0 0 60px #fff3a3, 0 0 120px #ffcc00;}
+  }
+
+  .lantern {
+    position:fixed; width:34px; height:48px;
+    background:radial-gradient(circle, #ffdd55, #ff9900);
+    border-radius:50% 50% 40% 40%;
+    box-shadow:0 0 20px #ffaa00, 0 0 40px #ff6600;
+    animation:floatUp 12s linear infinite;
+    z-index:1; pointer-events:none;
+  }
+  .lantern::before {
+    content:''; position:absolute; top:-7px; left:50%;
+    transform:translateX(-50%);
+    width:7px; height:9px; background:#b35900; border-radius:3px;
+  }
+  @keyframes floatUp {
+    0%   {transform:translateY(105vh) translateX(0);  opacity:0;}
+    10%  {opacity:.9;}
+    90%  {opacity:.9;}
+    100% {transform:translateY(-120px) translateX(30px); opacity:0;}
+  }
+
+  .heart {
+    position:fixed; bottom:0; font-size:18px;
+    animation:riseUp 6s linear infinite; opacity:0;
+    z-index:1; pointer-events:none;
+  }
+  @keyframes riseUp {
+    0%   {transform:translateY(0) scale(.5);     opacity:0;}
+    20%  {opacity:.9;}
+    100% {transform:translateY(-90vh) scale(1.2); opacity:0;}
+  }
+
+  .cursor-trail {
+    position:fixed; pointer-events:none; font-size:14px; z-index:99;
+    transform:translate(-50%, -50%);
+    animation:trailFade 1.2s ease-out forwards;
+  }
+  @keyframes trailFade {
+    0%   { opacity:1; transform:translate(-50%, -50%) scale(1);   }
+    100% { opacity:0; transform:translate(-50%, -70%) scale(.3);  }
+  }
+
+  .bottom-scene {
+    position:fixed; bottom:0; left:0; right:0;
+    width:100%; height:auto; max-height:230px;
+    z-index:2; pointer-events:none;
+    opacity:.95; line-height:0;
+  }
+  .bottom-scene svg { width:100%; height:auto; display:block; }
+  @media (max-width:400px) { .bottom-scene { max-height:180px; } }
+
+  .scene-stars circle { animation: sceneTwinkle 3s ease-in-out infinite; }
+  .scene-stars circle:nth-child(1) { animation-delay: 0s;   }
+  .scene-stars circle:nth-child(2) { animation-delay: .4s;  }
+  .scene-stars circle:nth-child(3) { animation-delay: .8s;  }
+  .scene-stars circle:nth-child(4) { animation-delay: 1.2s; }
+  .scene-stars circle:nth-child(5) { animation-delay: 1.6s; }
+  .scene-stars circle:nth-child(6) { animation-delay: 2.0s; }
+  .scene-stars circle:nth-child(7) { animation-delay: 2.4s; }
+  @keyframes sceneTwinkle {
+    0%,100% { opacity: .25; }
+    50%     { opacity: 1;   }
+  }
+
+  .bike-group { animation: bikeRide 6s ease-in-out infinite alternate; }
+  @keyframes bikeRide {
+    0%   { transform: translateX(-25px); }
+    100% { transform: translateX(25px);  }
+  }
+
+  .hanging-lantern { animation: lanternGlow 2s ease-in-out infinite; }
+  @keyframes lanternGlow {
+    0%,100% { opacity: .6; }
+    50%     { opacity: 1;  }
+  }
+
+  .flying-hearts text {
+    transform-box: fill-box; transform-origin: center;
+    animation: heartFloat 2.6s ease-out infinite;
+  }
+  @keyframes heartFloat {
+    0%   { transform: translateY(0) scale(.6);      opacity: 0; }
+    20%  { opacity: 1; }
+    100% { transform: translateY(-25px) scale(1.3); opacity: 0; }
+  }
+
+  .shooting-star { animation: shoot 5s linear infinite; }
+  @keyframes shoot {
+    0%   { transform: translate(0,0);        opacity: 0; }
+    5%   { opacity: 1; }
+    22%  { transform: translate(180px,60px); opacity: 1; }
+    28%  { opacity: 0; }
+    100% { transform: translate(180px,60px); opacity: 0; }
+  }
+
+  .river-wave { animation: riverWave 3s linear infinite; }
+  @keyframes riverWave {
+    0%   { transform: translateX(0);   }
+    100% { transform: translateX(20px);}
+  }
+
+  .flowers circle {
+    transform-box: fill-box; transform-origin: center;
+    animation: flowerSway 3s ease-in-out infinite;
+  }
+  .flowers circle:nth-child(even) { animation-delay: 1.2s; }
+  @keyframes flowerSway {
+    0%,100% { transform: scale(1);    }
+    50%     { transform: scale(1.25); }
+  }
+    /* ===== ⏰ Countdown ===== */
+  .countdown-overlay {
+    position:fixed; inset:0; z-index:200;
+    display:flex; align-items:center; justify-content:center;
+    padding:20px;
+    background:rgba(9,10,15,.85);
+    backdrop-filter:blur(15px); -webkit-backdrop-filter:blur(15px);
+    opacity:0; visibility:hidden; pointer-events:none;
+    transition:opacity .7s ease, visibility .7s ease;
+  }
+  .countdown-overlay.show { opacity:1; visibility:visible; pointer-events:auto; }
+  .countdown-card {
+    width:100%; max-width:400px;
+    padding:32px 24px 28px;
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,220,120,.3);
+    border-radius:26px;
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    box-shadow:0 0 70px rgba(255,200,80,.35);
+    text-align:center;
+    animation:fadeIn 1s ease;
+  }
+  .countdown-icon {
+    font-size:48px; margin-bottom:12px;
+    animation:moonPulse 3s ease-in-out infinite; line-height:1;
+  }
+  @keyframes moonPulse {
+    0%,100% { transform:scale(1);    filter:drop-shadow(0 0 15px #ffe066); }
+    50%     { transform:scale(1.15); filter:drop-shadow(0 0 30px #ffcc00); }
+  }
+  .countdown-card h2 { font-size:20px; color:#ffe066; margin-bottom:10px; text-shadow:0 0 15px rgba(255,220,100,.6); }
+  .countdown-sub { font-size:13px; color:#ffeaa7; line-height:1.8; margin-bottom:22px; }
+  .countdown-timer { display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:20px; }
+  .time-box {
+    flex:1; padding:12px 4px;
+    background:linear-gradient(145deg, rgba(255,200,80,.18), rgba(255,120,60,.10));
+    border:1.5px solid rgba(255,215,120,.5);
+    border-radius:14px;
+    box-shadow:0 0 20px rgba(255,180,80,.3);
+  }
+  .time-num {
+    font-size:26px; font-weight:700; color:#ffd75c;
+    text-shadow:0 0 12px rgba(255,180,60,.9);
+    font-family:'Courier New', monospace;
+    letter-spacing:1px;
+  }
+  .time-label { font-size:10.5px; color:#ffeaa7; margin-top:3px; opacity:.8; }
+  .time-sep { font-size:24px; color:#ffd75c; font-weight:700; animation:blink 1s step-end infinite; }
+  @keyframes blink { 50% { opacity:.3; } }
+  .countdown-note { font-size:11.5px; color:#ffb3b3; letter-spacing:.3px; line-height:1.7; }
+
+  /* ===== 📅 Quiz ===== */
+  .quiz-overlay {
+    position:fixed; inset:0; z-index:250;
+    background:rgba(9,10,15,.94);
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    display:none; align-items:center; justify-content:center;
+    padding:20px;
+  }
+  .quiz-overlay.show { display:flex; }
+  .quiz-card {
+    width:100%; max-width:400px;
+    padding:28px 22px;
+    background:rgba(255,255,255,.06);
+    border:1.5px solid rgba(255,215,120,.5);
+    border-radius:24px;
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    box-shadow:0 0 60px rgba(255,200,80,.4);
+    text-align:center;
+    animation:fadeIn .6s ease;
+  }
+  .quiz-card .quiz-icon { font-size:48px; margin-bottom:10px; animation:quizPulse 2s ease-in-out infinite; }
+  @keyframes quizPulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.12); } }
+  .quiz-card h2 { font-size:17px; color:#ffe066; margin-bottom:12px; text-shadow:0 0 15px rgba(255,220,100,.6); }
+  .quiz-card .quiz-q { font-size:14px; color:#ffeaa7; line-height:1.9; margin-bottom:18px; }
+  .quiz-card .quiz-input {
+    width:100%; padding:13px 14px;
+    background:rgba(0,0,0,.45);
+    border:1.5px solid rgba(255,215,120,.5);
+    border-radius:12px;
+    color:#fff; font-family:inherit; font-size:15px;
+    text-align:center;
+    margin-bottom:16px;
+    -webkit-appearance:none; appearance:none;
+  }
+  .quiz-card .quiz-input:focus { outline:none; border-color:rgba(255,215,120,.95); box-shadow:0 0 20px rgba(255,200,80,.5); }
+  .quiz-card .quiz-input::placeholder { color:rgba(255,255,255,.35); }
+  .quiz-card .quiz-btn {
+    padding:13px 34px;
+    background:linear-gradient(135deg, #ffb347, #ff7e5f);
+    color:#fff; border:none; border-radius:30px;
+    font-size:14px; font-family:inherit; font-weight:600;
+    cursor:pointer;
+    box-shadow:0 0 22px rgba(255,150,50,.6);
+    transition:all .3s ease;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .quiz-card .quiz-btn:active { transform:scale(.95); }
+  .quiz-msg { font-size:13px; margin-top:14px; min-height:20px; transition:color .3s ease; }
+  .quiz-msg.error { color:#ff7e7e; }
+  .quiz-msg.ok    { color:#34d399; }
+
+  /* ===== 🎲 Dice ===== */
+  .dice-overlay {
+    position:fixed; inset:0; z-index:260;
+    background:rgba(9,10,15,.94);
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    display:none; align-items:center; justify-content:center;
+    padding:20px;
+  }
+  .dice-overlay.show { display:flex; }
+  .dice-card {
+    width:100%; max-width:380px;
+    padding:30px 22px 26px;
+    background:rgba(255,255,255,.06);
+    border:1.5px solid rgba(255,215,120,.5);
+    border-radius:24px;
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    box-shadow:0 0 60px rgba(255,200,80,.4);
+    text-align:center;
+    animation:fadeIn .6s ease;
+  }
+  .dice-card h2 { font-size:18px; color:#ffe066; margin-bottom:10px; text-shadow:0 0 15px rgba(255,220,100,.6); }
+  .dice-card .dice-sub { font-size:12.5px; color:#ffeaa7; line-height:1.8; margin-bottom:22px; }
+  .dice-display {
+    width:120px; height:120px;
+    margin:0 auto 22px;
+    background:linear-gradient(145deg, #fff, #ffe066);
+    border-radius:22px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:64px; line-height:1;
+    box-shadow:0 0 45px rgba(255,200,80,.7), inset 0 0 30px rgba(255,150,50,.3);
+    animation:diceIdle 2.5s ease-in-out infinite;
+  }
+  @keyframes diceIdle {
+    0%,100% { transform:rotate(0deg) scale(1); }
+    25%     { transform:rotate(-5deg) scale(1.03); }
+    75%     { transform:rotate(5deg) scale(1.03); }
+  }
+  .dice-display.rolling { animation:diceRoll .35s linear infinite; }
+  @keyframes diceRoll {
+    0%   { transform:rotate(0deg)   scale(1);    }
+    25%  { transform:rotate(90deg)  scale(1.08); }
+    50%  { transform:rotate(180deg) scale(1);    }
+    75%  { transform:rotate(270deg) scale(1.08); }
+    100% { transform:rotate(360deg) scale(1);    }
+  }
+  .dice-card .dice-btn {
+    padding:13px 34px;
+    background:linear-gradient(135deg, #ffb347, #ff7e5f);
+    color:#fff; border:none; border-radius:30px;
+    font-size:14px; font-family:inherit; font-weight:600;
+    cursor:pointer;
+    box-shadow:0 0 22px rgba(255,150,50,.6);
+    transition:all .3s ease;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .dice-card .dice-btn:active { transform:scale(.95); }
+  .dice-card .dice-btn:disabled { opacity:.5; cursor:not-allowed; }
+  .dice-result { font-size:14px; color:#ffeaa7; line-height:1.7; min-height:24px; margin-top:16px; opacity:0; transition:opacity .5s ease; }
+  .dice-result.show { opacity:1; }
+
+  /* ===== Song Select ===== */
+  .song-select {
+    position:fixed; inset:0; z-index:100;
+    display:flex; align-items:center; justify-content:center;
+    padding:20px;
+    background:rgba(9,10,15,.72);
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    transition:opacity .7s ease, visibility .7s ease;
+  }
+  .song-select.hide { opacity:0; visibility:hidden; pointer-events:none; }
+  .song-card {
+    width:100%; max-width:420px;
+    padding:26px 20px 22px;
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,220,120,.25);
+    border-radius:24px;
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    box-shadow:0 0 60px rgba(255,200,80,.28);
+    animation:fadeIn 1s ease;
+  }
+  .song-card h2 { font-size:19px; color:#ffe066; text-align:center; text-shadow:0 0 15px rgba(255,220,100,.6); margin-bottom:8px; }
+  .song-card .song-sub { font-size:12.5px; color:#ffeaa7; text-align:center; line-height:1.8; margin-bottom:18px; }
+  .song-list { display:flex; flex-direction:column; gap:9px; }
+  .song-item {
+    padding:13px 16px;
+    background:linear-gradient(135deg, rgba(255,200,80,.12), rgba(255,120,60,.08));
+    border:1.5px solid rgba(255,215,120,.35);
+    border-radius:14px;
+    cursor:pointer;
+    color:#fff; font-family:inherit; font-size:13.5px;
+    text-align:left;
+    display:flex; align-items:center; gap:12px;
+    transition:all .3s ease;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .song-item:hover, .song-item:active {
+    transform:translateX(5px);
+    border-color:rgba(255,215,120,.85);
+    box-shadow:0 0 22px rgba(255,180,80,.45);
+    background:linear-gradient(135deg, rgba(255,200,80,.22), rgba(255,120,60,.16));
+  }
+  .song-item .icon { font-size:19px; }
+  .song-item .name { flex:1; font-weight:500; }
+  .song-item .play-icon { font-size:12px; opacity:.65; }
+
+  .music-btn {
+    position:fixed; top:16px; left:16px;
+    width:46px; height:46px; border-radius:50%;
+    background:rgba(255,200,80,.15);
+    border:1.5px solid rgba(255,215,120,.55);
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    color:#ffe066; font-size:19px; cursor:pointer;
+    z-index:50; display:none;
+    align-items:center; justify-content:center;
+    box-shadow:0 0 22px rgba(255,180,80,.5);
+    transition:all .3s ease;
+    -webkit-tap-highlight-color:transparent;
+    font-family:inherit;
+  }
+  .music-btn.show { display:flex; }
+  .music-btn:active { transform:scale(.92); }
+
+  .change-song-btn {
+    position:fixed; top:16px; left:72px;
+    height:46px; padding:0 16px; border-radius:23px;
+    background:rgba(255,200,80,.12);
+    border:1.5px solid rgba(255,215,120,.45);
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    color:#ffe066; font-size:12px; font-family:inherit;
+    cursor:pointer; z-index:50; display:none;
+    align-items:center; justify-content:center;
+    gap:6px; transition:all .3s ease;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .change-song-btn.show { display:flex; }
+  .change-song-btn:active { transform:scale(.95); }
+
+  .card {
+    position:relative; z-index:10; width:100%; max-width:440px;
+    padding:28px 20px 26px; text-align:center;
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,220,120,.25);
+    border-radius:24px;
+    backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    box-shadow:0 0 60px rgba(255,200,80,.25);
+    display:none;
+  }
+  .card.show { display:block; animation:fadeIn 1.2s ease; }
+  @keyframes fadeIn {
+    from{opacity:0; transform:translateY(30px);}
+    to  {opacity:1; transform:translateY(0);}
+  }
+
+  h1 { font-size:21px; color:#ffe066; margin-bottom:10px; text-shadow:0 0 15px rgba(255,220,100,.6); }
+  .sub { font-size:13px; color:#ffeaa7; line-height:1.9; margin-bottom:20px; }
+
+  .btn {
+    padding:13px 32px;
+    background:linear-gradient(135deg, #ffb347, #ff7e5f);
+    color:#fff; border:none; border-radius:30px;
+    font-size:14.5px; font-family:inherit; font-weight:600;
+    cursor:pointer;
+    box-shadow:0 0 22px rgba(255,150,50,.6);
+    transition:all .3s ease;
+  }
+  .btn:active {transform:scale(.95);}
+
+  .counter { font-size:12.5px; color:#ffd97d; letter-spacing:1px; margin-bottom:14px; opacity:0; transition:opacity .4s; }
+  .counter.show {opacity:1;}
+
+  .grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:10px; margin-top:6px; }
+
+  .box {
+    height:118px;
+    perspective:900px;
+    cursor:pointer;
+    opacity:0;
+    transition:opacity .55s ease, transform .55s cubic-bezier(.34,1.56,.64,1);
+    -webkit-tap-highlight-color:transparent;
+  }
+  .box:nth-child(odd)  { transform:translateX(-70px) scale(.85); }
+  .box:nth-child(even) { transform:translateX(70px)  scale(.85); }
+  .box.appear { opacity:1; transform:translateX(0) scale(1); }
+
+  .box-inner {
+    position:relative; width:100%; height:100%;
+    transition:transform .75s cubic-bezier(.4,.2,.2,1);
+    transform-style:preserve-3d;
+  }
+  .box.flipped .box-inner {transform:rotateY(180deg);}
+
+  .face {
+    position:absolute; inset:0;
+    border-radius:16px;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    padding:8px;
+    backface-visibility:hidden; -webkit-backface-visibility:hidden;
+    text-align:center;
+  }
+
+  .front {
+    background:linear-gradient(145deg, rgba(255,200,80,.22), rgba(255,120,60,.16));
+    border:1.5px solid rgba(255,215,120,.55);
+    box-shadow:0 0 18px rgba(255,180,80,.35), inset 0 0 20px rgba(255,200,80,.12);
+    animation:boxPulse 2.2s ease-in-out infinite;
+  }
+  @keyframes boxPulse {
+    0%,100%{box-shadow:0 0 18px rgba(255,180,80,.35), inset 0 0 20px rgba(255,200,80,.12);}
+    50%    {box-shadow:0 0 30px rgba(255,200,80,.7),  inset 0 0 26px rgba(255,200,80,.25);}
+  }
+  .front .gift {font-size:30px; line-height:1; filter:drop-shadow(0 0 10px #ffbb33);}
+  .front .num  { margin-top:6px; font-size:11px; color:#ffe9a8; letter-spacing:2px; opacity:.85; }
+
+  .back {
+    background:rgba(255,240,200,.10);
+    border:1.5px solid rgba(255,225,140,.7);
+    box-shadow:0 0 24px rgba(255,200,80,.45), inset 0 0 24px rgba(255,200,80,.10);
+    transform:rotateY(180deg);
+    font-size:12.5px; line-height:1.75;
+    color:#fff8e1; font-weight:500;
+  }
+
+  .box.flipped .front {animation:none;}
+  .box.locked {cursor:not-allowed; pointer-events:none;}
+  .box.locked .front {
+    background:linear-gradient(145deg, rgba(120,120,120,.14), rgba(80,80,80,.10));
+    border-color:rgba(150,150,150,.30);
+    box-shadow:none;
+    animation:none;
+    opacity:.32;
+  }
+  .box.locked .front .gift { filter:none; opacity:.5; }
+
+  .final-box {
+    max-height:0; overflow:hidden; opacity:0;
+    transition:max-height .8s ease, opacity .8s ease, margin .8s ease;
+    margin-top:0;
+  }
+  .final-box.show {max-height:500px; opacity:1; margin-top:20px;}
+  .final-inner {
+    padding:20px 14px; border-radius:18px;
+    background:linear-gradient(145deg, rgba(255,200,80,.18), rgba(255,110,150,.14));
+    border:1.5px solid rgba(255,215,120,.6);
+    box-shadow:0 0 40px rgba(255,190,80,.5);
+    animation:finalPulse 1.8s ease-in-out infinite;
+  }
+  @keyframes finalPulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.03);} }
+  .final-inner .big { font-size:19px; color:#ffd75c; text-shadow:0 0 20px #ff9900; line-height:1.8; margin-bottom:6px; }
+  .final-inner .small { font-size:13px; color:#ffeaa7; line-height:1.9; min-height:80px; }
+
+  .lock-msg { font-size:12.5px; color:#ffb3b3; margin-top:12px; letter-spacing:.5px; opacity:0; transition:opacity .5s; }
+  .lock-msg.show {opacity:1;}
+
+  .my-message {
+    position:fixed; top:50%; left:50%;
+    transform:translate(-50%, -50%) scale(.9);
+    width:85%; max-width:380px;
+    padding:20px 22px;
+    background:rgba(0,0,0,.55);
+    border:1.5px solid rgba(255,215,120,.5);
+    border-radius:20px;
+    backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    text-align:center;
+    font-size:17px; line-height:1.8;
+    color:#ffeaa7;
+    text-shadow:0 0 14px rgba(255,220,100,.8);
+    z-index:20; opacity:0;
+    transition:opacity .4s ease, transform .4s ease;
+    pointer-events:none;
+    box-shadow:0 0 40px rgba(255,200,80,.35);
+  }
+  .my-message.show { opacity:1; transform:translate(-50%, -50%) scale(1); }
+
+  /* ===== Final Box ထဲက Reply ခလုတ် ===== */
+  .open-reply-btn {
+    display:none;
+    width:100%;
+    margin-top:16px;
+    padding:15px 22px;
+    background:linear-gradient(135deg, #4facfe, #00c4ff);
+    color:#fff;
+    border:none;
+    border-radius:30px;
+    font-size:15px;
+    font-family:inherit;
+    font-weight:600;
+    cursor:pointer;
+    box-shadow:0 0 25px rgba(79,172,254,.7);
+    transition:all .3s ease;
+    -webkit-tap-highlight-color:transparent;
+    animation:btnPulse 2s ease-in-out infinite;
+  }
+  .open-reply-btn.show { display:block; }
+  .open-reply-btn:active { transform:scale(.96); }
+  @keyframes btnPulse {
+    0%,100% { box-shadow:0 0 25px rgba(79,172,254,.7); }
+    50%     { box-shadow:0 0 40px rgba(79,172,254,1);  }
+  }
+
+  /* ===== 📸 Reply Page Overlay ===== */
+  .reply-overlay {
+    position:fixed; inset:0; z-index:400;
+    background:rgba(9,10,15,.96);
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    display:none; align-items:flex-start; justify-content:center;
+    padding:20px 14px 40px;
+    overflow-y:auto;
+  }
+  .reply-overlay.show { display:flex; }
+
+  .reply-page {
+    width:100%; max-width:440px;
+    padding:24px 20px 26px;
+    background:rgba(255,255,255,.06);
+    border:1.5px solid rgba(79,172,254,.5);
+    border-radius:24px;
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    box-shadow:0 0 60px rgba(79,172,254,.4);
+    animation:fadeIn .6s ease;
+    margin-top:20px;
+  }
+  .reply-page .rp-head { text-align:center; margin-bottom:20px; }
+  .reply-page .rp-icon {
+    font-size:44px; margin-bottom:8px;
+    animation:quizPulse 2s ease-in-out infinite;
+  }
+  .reply-page h2 {
+    font-size:19px; color:#9ae1ff;
+    margin-bottom:8px;
+    text-shadow:0 0 15px rgba(79,172,254,.6);
+  }
+  .reply-page .rp-sub {
+    font-size:12px; color:#c8e8ff;
+    line-height:1.8; opacity:.9;
+  }
+  .reply-page .rp-label {
+    font-size:11.5px;
+    color:#c8e8ff;
+    letter-spacing:1px;
+    margin-bottom:8px;
+    text-transform:uppercase;
+    opacity:.85;
+  }
+  .reply-page .rp-input {
+    width:100%;
+    min-height:130px;
+    padding:14px 16px;
+    background:rgba(0,0,0,.55);
+    border:1.5px solid rgba(79,172,254,.5);
+    border-radius:14px;
+    color:#fff;
+    font-family:inherit;
+    font-size:14.5px;
+    line-height:1.8;
+    resize:vertical;
+    margin-bottom:14px;
+    -webkit-appearance:none;
+    appearance:none;
+  }
+  .reply-page .rp-input:focus {
+    outline:none;
+    border-color:rgba(79,172,254,.95);
+    box-shadow:0 0 20px rgba(79,172,254,.5);
+  }
+  .reply-page .rp-input::placeholder { color:rgba(255,255,255,.35); }
+
+  .reply-page .rp-info {
+    display:flex;
+    gap:8px;
+    margin-bottom:16px;
+    flex-wrap:wrap;
+  }
+  .reply-page .rp-info-item {
+    flex:1;
+    min-width:100px;
+    padding:10px 8px;
+    background:rgba(79,172,254,.12);
+    border:1px solid rgba(79,172,254,.35);
+    border-radius:10px;
+    text-align:center;
+  }
+  .reply-page .rp-info-item .lbl {
+    font-size:10px;
+    color:#9ae1ff;
+    margin-bottom:3px;
+    letter-spacing:.5px;
+  }
+  .reply-page .rp-info-item .val {
+    font-size:16px;
+    font-weight:700;
+    color:#fff;
+    text-shadow:0 0 8px rgba(79,172,254,.6);
+  }
+
+  .reply-page .rp-btn {
+    width:100%;
+    padding:15px 22px;
+    background:linear-gradient(135deg, #4facfe, #00c4ff);
+    color:#fff;
+    border:none;
+    border-radius:30px;
+    font-size:15px;
+    font-family:inherit;
+    font-weight:600;
+    cursor:pointer;
+    box-shadow:0 0 25px rgba(79,172,254,.7);
+    transition:all .3s ease;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .reply-page .rp-btn:active { transform:scale(.96); }
+  .reply-page .rp-btn:disabled { opacity:.55; cursor:not-allowed; box-shadow:none; }
+
+  .reply-page .rp-back {
+    width:100%;
+    margin-top:10px;
+    padding:11px 22px;
+    background:transparent;
+    color:#9ae1ff;
+    border:1.5px solid rgba(79,172,254,.4);
+    border-radius:30px;
+    font-size:13px;
+    font-family:inherit;
+    cursor:pointer;
+    transition:all .3s ease;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .reply-page .rp-back:active { transform:scale(.96); }
+
+  .reply-page .rp-status {
+    font-size:12.5px;
+    margin-top:12px;
+    min-height:20px;
+    text-align:center;
+    transition:color .3s ease;
+  }
+  .reply-page .rp-status.ok    { color:#34d399; }
+  .reply-page .rp-status.err   { color:#ff7e7e; }
+  .reply-page .rp-status.info  { color:#9ae1ff; }
+
+  .toast {
+    position:fixed; bottom:30px; left:50%;
+    transform:translateX(-50%) translateY(60px);
+    padding:12px 22px;
+    background:rgba(0,0,0,.88);
+    color:#ffeaa7;
+    border:1px solid rgba(255,215,120,.5);
+    border-radius:30px; font-size:13px;
+    z-index:999; opacity:0;
+    transition:opacity .4s ease, transform .4s ease;
+    pointer-events:none; max-width:85%; text-align:center;
+  }
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="moon"></div>
+
+<div class="my-message" id="myMessage"></div>
+
+<!-- ⏰ Countdown Overlay -->
+<div class="countdown-overlay" id="countdownOverlay">
+  <div class="countdown-card">
+    <div class="countdown-icon">🌙</div>
+    <h2>သဲတုန်းလေးရေ...</h2>
+    <p class="countdown-sub">
+      ည <b>၈ နာရီ</b> ကနေ <b>၁၂ နာရီ</b> ကြားမှ<br>
+      ဖွင့်လို့ရမယ်နော် 💛
+    </p>
+    <div class="countdown-timer">
+      <div class="time-box"><div class="time-num" id="cdHours">00</div><div class="time-label">နာရီ</div></div>
+      <div class="time-sep">:</div>
+      <div class="time-box"><div class="time-num" id="cdMins">00</div><div class="time-label">မိနစ်</div></div>
+      <div class="time-sep">:</div>
+      <div class="time-box"><div class="time-num" id="cdSecs">00</div><div class="time-label">စက္ကန့်</div></div>
+    </div>
+    <p class="countdown-note">⏰ အချိန် ရောက်ရင် အလိုအလျောက်<br>ဖွင့်လို့ရပါပြီ 🌟</p>
+  </div>
+</div>
+
+<!-- 📅 Quiz Overlay -->
+<div class="quiz-overlay" id="quizOverlay">
+  <div class="quiz-card">
+    <div class="quiz-icon">💌</div>
+    <h2>မဖြေမချင်း ဝင်လို့ မရဘူးနော်</h2>
+    <p class="quiz-q">
+      ကိုကိုတို့ ချစ်သူ စဖြစ်ခဲ့တဲ့ နေ့က<br>
+      ဘယ်နေ့လဲ သဲတုန်းလေးရယ် 💛
+    </p>
+    <input type="text" class="quiz-input" id="quizInput" 
+           placeholder="ရက် / လ / ခုနှစ်" maxlength="15">
+    <br>
+    <button class="quiz-btn" onclick="submitQuiz()">✅ ဖြေမယ်</button>
+    <div class="quiz-msg" id="quizMsg"></div>
+  </div>
+</div>
+
+<!-- 🎲 Dice Overlay -->
+<div class="dice-overlay" id="diceOverlay">
+  <div class="dice-card">
+    <h2>🎲 ကံစမ်းကြည့် 🎲</h2>
+    <p class="dice-sub">အန်စာတုံး လှိမ့်ကြည့်ပါ<br>ကံကောင်းရင် အပိုဆု ရမယ် 💫</p>
+    <div class="dice-display" id="diceDisplay">🎲</div>
+    <button class="dice-btn" id="diceBtn" onclick="rollDice()">🎲 လှိမ့်မယ်</button>
+    <div class="dice-result" id="diceResult"></div>
+  </div>
+</div>
+
+<!-- 🎵 Song Select -->
+<div class="song-select" id="songSelect">
+  <div class="song-card">
+    <h2>🎵 သီချင်း ရွေးလိုက်ပါ 🎵</h2>
+    <div class="song-sub">သဲတုန်းကြိုက်တဲ့သီချင်း<br>ရွေးပီးနားထောင်လိုက်နော် 💛</div>
+    <div class="song-list" id="songList"></div>
+  </div>
+</div>
+
+<button class="music-btn" id="musicBtn" onclick="toggleMusic()">🎵</button>
+<button class="change-song-btn" id="changeSongBtn" onclick="openSongPicker()">🔀 ပြောင်း</button>
+
+<!-- Main Card -->
+<div class="card" id="mainCard">
+  <h1>🌕 သီတင်းကျွတ် Surprise ပါသဲတုန်းရေ 🌕</h1>
+  <div class="sub">Box ၇ လုံးထဲမှာ <b>၃ လုံးပဲ</b> ဖွင့်ခွင့်ရတယ် 🎁<br>ကြိုက်တဲ့ box ကို ရွေးလိုက်ပါ 💛</div>
+
+  <button class="btn" id="btn" onclick="startSurprise()">🎁 စတင် ရွေးချယ်မယ်</button>
+
+  <div class="counter" id="counter">0 / 3 ရွေးပြီး</div>
+
+  <div class="grid" id="grid"></div>
+
+  <div class="lock-msg" id="lockMsg">🔒 ရွေးချယ်ခွင့် ကုန်သွားပါပြီ</div>
+
+  <div class="final-box" id="finalBox">
+    <div class="final-inner">
+      <div class="big">🌕 သီတင်းကျွတ်မှာပျော်ရွှင်ပါစေ 🌕</div>
+      <div class="small">
+        Box ၃ လုံး ဖွင့်ပြီးပါပြီ 💛<br>
+        မီးပုံးလေးတွေ လင်းသလို<br>
+        သဲတုန်းလေးရဲ့ ဘဝလည်း<br>
+        အလင်းရောင်တွေ ပြည့်နေပါစေ ✨<br><br>
+        <b>ချစ်ရတဲ့ သဲတုန်းလေးရေ 💖</b>
+      </div>
+    </div>
+  </div>
+
+  <!-- 📸 Reply ခလုတ် (Final Box ထဲမှာ) -->
+  <button class="open-reply-btn" id="openReplyBtn" onclick="openReplyPage()">
+    📝 ကိုကို့ကို စာ ရေးမယ် 💌
+  </button>
+</div>
+
+<!-- 🚲 အောက်ဆုံး ပုံ -->
+<div class="bottom-scene">
+  <svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax meet">
+    <defs>
+      <linearGradient id="riverGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#1e3a5f"/>
+        <stop offset="100%" stop-color="#0a1a2e"/>
+      </linearGradient>
+      <radialGradient id="moonGrad" cx="35%" cy="35%">
+        <stop offset="0%" stop-color="#fffbe6"/>
+        <stop offset="70%" stop-color="#ffe066"/>
+      </radialGradient>
+      <linearGradient id="roofGradL" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#2a1810"/>
+        <stop offset="100%" stop-color="#150a05"/>
+      </linearGradient>
+      <linearGradient id="roofGradR" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#2a1810"/>
+        <stop offset="100%" stop-color="#150a05"/>
+      </linearGradient>
+    </defs>
+
+    <circle cx="355" cy="30" r="15" fill="url(#moonGrad)" opacity="0.9"/>
+
+    <g class="shooting-star">
+      <line x1="0" y1="0" x2="32" y2="14" stroke="#fff" stroke-width="1.3" opacity="0.9"/>
+      <circle cx="32" cy="14" r="2.2" fill="#fff"/>
+    </g>
+
+    <g class="scene-stars">
+      <circle cx="30"  cy="20" r="1.2" fill="#fff"/>
+      <circle cx="80"  cy="45" r="1"   fill="#fff"/>
+      <circle cx="120" cy="15" r="1.3" fill="#fff"/>
+      <circle cx="180" cy="30" r="1"   fill="#fff"/>
+      <circle cx="230" cy="50" r="1.2" fill="#fff"/>
+      <circle cx="280" cy="18" r="1"   fill="#fff"/>
+      <circle cx="325" cy="52" r="1.1" fill="#fff"/>
+    </g>
+
+    <rect x="0" y="195" width="400" height="25" fill="url(#riverGrad)"/>
+    <g class="river-wave">
+      <path d="M0,200 Q20,197 40,200 T80,200 T120,200 T160,200 T200,200 T240,200 T280,200 T320,200 T360,200 T400,200 T440,200"
+            stroke="#4a8fc4" stroke-width="0.8" fill="none" opacity="0.6"/>
+    </g>
+    <g class="river-wave" style="animation-delay:1.5s">
+      <path d="M0,208 Q25,205 50,208 T100,208 T150,208 T200,208 T250,208 T300,208 T350,208 T400,208 T450,208"
+            stroke="#4a8fc4" stroke-width="0.8" fill="none" opacity="0.35"/>
+    </g>
+
+    <rect x="0" y="175" width="400" height="20" fill="#0a0d14"/>
+
+    <g>
+      <rect x="8" y="105" width="65" height="70" fill="#141b26" stroke="#3a2a10" stroke-width="0.6"/>
+      <polygon points="0,108 40,70 80,108" fill="url(#roofGradL)" stroke="#3a2a10" stroke-width="0.6"/>
+      <rect x="36" y="55" width="8" height="18" fill="#1a1a1a" stroke="#3a2a10" stroke-width="0.4"/>
+      <circle cx="40" cy="48" r="3" fill="#333" opacity="0.5"/>
+      <circle cx="42" cy="42" r="2.5" fill="#333" opacity="0.35"/>
+      <rect x="32" y="145" width="16" height="30" fill="#0a0a0a" stroke="#ffcc55" stroke-width="0.4"/>
+      <circle cx="44" cy="160" r="1" fill="#ffcc55"/>
+      <rect x="14" y="122" width="12" height="12" fill="#ffcc55" opacity="0.8" stroke="#3a2a10" stroke-width="0.4"/>
+      <line x1="20" y1="122" x2="20" y2="134" stroke="#3a2a10" stroke-width="0.4"/>
+      <line x1="14" y1="128" x2="26" y2="128" stroke="#3a2a10" stroke-width="0.4"/>
+      <rect x="54" y="122" width="12" height="12" fill="#ffcc55" opacity="0.8" stroke="#3a2a10" stroke-width="0.4"/>
+      <line x1="60" y1="122" x2="60" y2="134" stroke="#3a2a10" stroke-width="0.4"/>
+      <line x1="54" y1="128" x2="66" y2="128" stroke="#3a2a10" stroke-width="0.4"/>
+      <g class="hanging-lantern">
+        <line x1="18" y1="95" x2="18" y2="102" stroke="#3a2a10" stroke-width="0.6"/>
+        <circle cx="18" cy="106" r="3.5" fill="#ff6600" opacity="0.95"/>
+        <circle cx="18" cy="106" r="2"   fill="#ffdd66" opacity="0.7"/>
+      </g>
+      <g class="hanging-lantern" style="animation-delay:0.7s">
+        <line x1="62" y1="95" x2="62" y2="102" stroke="#3a2a10" stroke-width="0.6"/>
+        <circle cx="62" cy="106" r="3.5" fill="#ff6600" opacity="0.95"/>
+        <circle cx="62" cy="106" r="2"   fill="#ffdd66" opacity="0.7"/>
+      </g>
+    </g>
+
+    <g>
+      <rect x="327" y="105" width="65" height="70" fill="#141b26" stroke="#3a2a10" stroke-width="0.6"/>
+      <polygon points="320,108 360,70 400,108" fill="url(#roofGradR)" stroke="#3a2a10" stroke-width="0.6"/>
+      <rect x="356" y="55" width="8" height="18" fill="#1a1a1a" stroke="#3a2a10" stroke-width="0.4"/>
+      <circle cx="360" cy="48" r="3" fill="#333" opacity="0.5"/>
+      <circle cx="358" cy="42" r="2.5" fill="#333" opacity="0.35"/>
+      <rect x="352" y="145" width="16" height="30" fill="#0a0a0a" stroke="#ffcc55" stroke-width="0.4"/>
+      <circle cx="356" cy="160" r="1" fill="#ffcc55"/>
+      <rect x="334" y="122" width="12" height="12" fill="#ffcc55" opacity="0.8" stroke="#3a2a10" stroke-width="0.4"/>
+      <line x1="340" y1="122" x2="340" y2="134" stroke="#3a2a10" stroke-width="0.4"/>
+      <line x1="334" y1="128" x2="346" y2="128" stroke="#3a2a10" stroke-width="0.4"/>
+      <rect x="374" y="122" width="12" height="12" fill="#ffcc55" opacity="0.8" stroke="#3a2a10" stroke-width="0.4"/>
+      <line x1="380" y1="122" x2="380" y2="134" stroke="#3a2a10" stroke-width="0.4"/>
+      <line x1="374" y1="128" x2="386" y2="128" stroke="#3a2a10" stroke-width="0.4"/>
+      <g class="hanging-lantern" style="animation-delay:0.4s">
+        <line x1="338" y1="95" x2="338" y2="102" stroke="#3a2a10" stroke-width="0.6"/>
+        <circle cx="338" cy="106" r="3.5" fill="#ff6600" opacity="0.95"/>
+        <circle cx="338" cy="106" r="2"   fill="#ffdd66" opacity="0.7"/>
+      </g>
+      <g class="hanging-lantern" style="animation-delay:1.1s">
+        <line x1="382" y1="95" x2="382" y2="102" stroke="#3a2a10" stroke-width="0.6"/>
+        <circle cx="382" cy="106" r="3.5" fill="#ff6600" opacity="0.95"/>
+        <circle cx="382" cy="106" r="2"   fill="#ffdd66" opacity="0.7"/>
+      </g>
+    </g>
+
+    <g>
+      <rect x="98" y="145" width="5" height="30" fill="#2a1a08"/>
+      <circle cx="100.5" cy="138" r="14" fill="#0f1a15"/>
+      <circle cx="94"  cy="142" r="9"  fill="#0f1a15"/>
+      <circle cx="107" cy="142" r="9"  fill="#0f1a15"/>
+    </g>
+
+    <g>
+      <rect x="296" y="145" width="5" height="30" fill="#2a1a08"/>
+      <circle cx="298.5" cy="138" r="14" fill="#0f1a15"/>
+      <circle cx="292" cy="142" r="9"  fill="#0f1a15"/>
+      <circle cx="305" cy="142" r="9"  fill="#0f1a15"/>
+    </g>
+
+    <g class="flowers">
+      <circle cx="120" cy="183" r="2.2" fill="#ff7e9c"/>
+      <circle cx="120" cy="183" r="0.9" fill="#ffe066"/>
+      <circle cx="145" cy="185" r="1.8" fill="#ffe066"/>
+      <circle cx="145" cy="185" r="0.8" fill="#fff"/>
+      <circle cx="255" cy="185" r="1.8" fill="#ffe066"/>
+      <circle cx="255" cy="185" r="0.8" fill="#fff"/>
+      <circle cx="280" cy="183" r="2.2" fill="#ff7e9c"/>
+      <circle cx="280" cy="183" r="0.9" fill="#ffe066"/>
+    </g>
+
+    <g class="bike-group">
+      <ellipse cx="180" cy="187" rx="35" ry="2" fill="#000" opacity="0.4"/>
+      <g stroke="#ffe066" stroke-width="1.6" fill="none" opacity="0.95">
+        <circle cx="155" cy="178" r="9"/>
+        <line x1="155" y1="169" x2="155" y2="187"/>
+        <line x1="146" y1="178" x2="164" y2="178"/>
+      </g>
+      <g stroke="#ffe066" stroke-width="1.6" fill="none" opacity="0.95">
+        <circle cx="198" cy="178" r="9"/>
+        <line x1="198" y1="169" x2="198" y2="187"/>
+        <line x1="189" y1="178" x2="207" y2="178"/>
+      </g>
+      <g stroke="#ffe066" stroke-width="1.6" fill="none" opacity="0.95">
+        <path d="M155,178 L172,158 L192,158 L198,178"/>
+        <path d="M172,158 L168,152"/>
+        <line x1="165" y1="152" x2="173" y2="152" stroke-width="2"/>
+        <path d="M192,158 L200,152"/>
+        <line x1="196" y1="150" x2="204" y2="150" stroke-width="1.5"/>
+        <circle cx="178" cy="170" r="2" fill="#ffe066"/>
+        <line x1="178" y1="170" x2="172" y2="178" stroke-width="1"/>
+      </g>
+      <g fill="#ffe066" opacity="0.98">
+        <circle cx="184" cy="138" r="5.2"/>
+        <path d="M179,136 Q184,132 189,136 L189,140 Q184,138 179,140 Z" fill="#ffe066" opacity="0.55"/>
+        <path d="M184,143 Q184,152 182,158 L187,158 Q185,152 184,143 Z"/>
+        <path d="M184,148 Q192,150 199,151" stroke="#ffe066" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+        <path d="M184,158 Q180,163 177,168" stroke="#ffe066" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+        <path d="M184,158 Q188,163 189,168" stroke="#ffe066" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      </g>
+      <g fill="#ffe066" opacity="0.98">
+        <circle cx="166" cy="140" r="5"/>
+        <path d="M161,138 Q166,133 171,138 L171,146 Q166,143 161,146 Z" fill="#ffe066" opacity="0.6"/>
+        <path d="M161,144 Q159,150 160,155" stroke="#ffe066" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.7"/>
+        <path d="M166,145 Q166,154 164,160 L169,160 Q167,154 166,145 Z"/>
+        <path d="M166,150 Q174,150 181,150" stroke="#ffe066" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+        <path d="M166,160 Q162,165 160,170" stroke="#ffe066" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+        <path d="M166,160 Q170,165 172,170" stroke="#ffe066" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      </g>
+      <g class="flying-hearts"><text x="172" y="128" font-size="8" fill="#ff7e9c">💛</text></g>
+      <g class="flying-hearts" style="animation-delay:0.9s"><text x="184" y="122" font-size="7" fill="#ff7e9c">💖</text></g>
+      <g class="flying-hearts" style="animation-delay:1.7s"><text x="178" y="125" font-size="6" fill="#ff7e9c">💛</text></g>
+    </g>
+  </svg>
+</div>
+
+<!-- 📸 Reply Page Overlay -->
+<div class="reply-overlay" id="replyOverlay">
+  <div class="reply-page">
+    <div class="rp-head">
+      <div class="rp-icon">💌</div>
+      <h2>ကိုကို့ကို စာ ရေးလိုက်နော်</h2>
+      <p class="rp-sub">
+        စာ ရေးပြီး ပို့လိုက်ရင်<br>
+        Screen လေးနဲ့ အတူ ကိုကို့ဆီ ရောက်သွားမယ် 💛
+      </p>
+    </div>
+
+    <div class="rp-label">📝 ကိုကို့ ပြောချင်တာ</div>
+    <textarea class="rp-input" id="replyMsg" 
+              placeholder="ဒီမှာ ရေးထည့်ပါ..."></textarea>
+
+    <div class="rp-info">
+      <div class="rp-info-item">
+        <div class="lbl">🎲 အန်စာတုံး</div>
+        <div class="val" id="rpDice">-</div>
+      </div>
+      <div class="rp-info-item">
+        <div class="lbl">🔄 ပြန်စ အကြိမ်</div>
+        <div class="val" id="rpRestart">0</div>
+      </div>
+      <div class="rp-info-item">
+        <div class="lbl">🎁 ဖွင့်တဲ့ Box</div>
+        <div class="val" id="rpBoxes">0</div>
+      </div>
+    </div>
+
+    <button class="rp-btn" id="rpSendBtn" onclick="sendReplyAll()">
+      📤 Screenshot + စာ ပို့မယ်
+    </button>
+    <button class="rp-back" onclick="closeReplyPage()">
+      ← ပြန်သွားမယ်
+    </button>
+    <div class="rp-status" id="rpStatus"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= ကြယ် ================= */
+for (let i = 0; i < 70; i++) {
+  const s = document.createElement('div');
+  s.className = 'star';
+  const size = Math.random() * 2.4 + 1;
+  s.style.width  = size + 'px';
+  s.style.height = size + 'px';
+  s.style.left   = Math.random() * 100 + '%';
+  s.style.top    = Math.random() * 100 + '%';
+  s.style.animationDelay = Math.random() * 3 + 's';
+  document.body.appendChild(s);
+}
+
+/* ================= မီးပုံး ================= */
+function spawnLantern() {
+  const l = document.createElement('div');
+  l.className = 'lantern';
+  l.style.left = Math.random() * 92 + 4 + '%';
+  l.style.animationDuration = (11 + Math.random() * 8) + 's';
+  l.style.animationDelay    = Math.random() * 4 + 's';
+  document.body.appendChild(l);
+  setTimeout(() => l.remove(), 26000);
+}
+for (let i = 0; i < 5; i++) spawnLantern();
+setInterval(spawnLantern, 1400);
+
+/* ================= နှလုံး ================= */
+setInterval(() => {
+  const h = document.createElement('div');
+  h.className = 'heart';
+  h.textContent = ['💛','💖','🌕','✨','🎁'][Math.floor(Math.random()*5)];
+  h.style.left = Math.random() * 100 + '%';
+  h.style.animationDuration = (5 + Math.random() * 3) + 's';
+  document.body.appendChild(h);
+  setTimeout(() => h.remove(), 8500);
+}, 800);
+
+/* ================= Cursor Trail ================= */
+let lastTrailTime = 0;
+function spawnTrail(x, y) {
+  const now = Date.now();
+  if (now - lastTrailTime < 70) return;
+  lastTrailTime = now;
+  const el = document.createElement('div');
+  el.className = 'cursor-trail';
+  el.textContent = ['✨','⭐','💛','🌟','💫'][Math.floor(Math.random()*5)];
+  el.style.left = x + 'px';
+  el.style.top  = y + 'px';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1200);
+}
+document.addEventListener('touchmove', (e) => {
+  const t = e.touches[0];
+  if (t) spawnTrail(t.clientX, t.clientY);
+}, { passive: true });
+document.addEventListener('mousemove', (e) => {
+  spawnTrail(e.clientX, e.clientY);
+});
+
+/* ================= SONG LIST ================= */
+const SONGS = [
+  { icon:'🌕', name:'有你在',              url:'https://raw.githubusercontent.com/mtk141847-hue/MTK/main/%E6%9C%89%E4%BD%A0%E5%9C%A8-Rosy%E8%B5%B5%E9%9C%B2%E6%80%9D-%E6%9C%89%E4%BD%A0%E5%9C%A8.mp3' },
+  { icon:'💛', name:'最甜情歌 (女生版)',   url:'https://raw.githubusercontent.com/mtk141847-hue/Hji/main/5_6221965503619941501%20(1).mp3' },
+  { icon:'🏮', name:'回答-YOUNG',          url:'https://raw.githubusercontent.com/mtk141847-hue/Young/main/%E5%9B%9E%E7%AD%94-YOUNG-%E5%9B%9E%E7%AD%94.mp3' },
+  { icon:'✨', name:'Insomnia flight',     url:'https://raw.githubusercontent.com/mtk141847-hue/Boom/main/Insomnia_flight_%E6%B1%9F%E7%9F%A5%E6%84%8F_%E6%A1%83%E4%B8%83Seven_Insomnia_flight_%E4%B8%83%E5%A4%95%E9%99%90%E5%AE%9A%E6%8D%8F_3.mp3' },
+  { icon:'💖', name:'No Reason',           url:'https://raw.githubusercontent.com/mtk141847-hue/Reason/main/No%20Reason%20%20%20Ryan.B%20%20%20effie.mp3' }
+];
+
+const audio = new Audio();
+audio.loop = true;
+audio.volume = 0.55;
+audio.preload = 'auto';
+
+let audioCtx = null;
+function initAudio() {
+  if (!audioCtx) {
+    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+  }
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+}
+function playPop() {
+  if (!audioCtx) return;
+  try {
+    const t = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(880, t);
+    osc.frequency.exponentialRampToValueAtTime(220, t + 0.1);
+    gain.gain.setValueAtTime(0.001, t);
+    gain.gain.exponentialRampToValueAtTime(0.3, t + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(t); osc.stop(t + 0.2);
+  } catch(e) {}
+}
+
+function fireConfetti() {
+  if (typeof confetti !== 'function') return;
+  confetti({
+    particleCount: 45, spread: 75, origin: { y: 0.6 },
+    colors: ['#ffe066','#ff7e5f','#ffb347','#ff7e9c','#fff3a3','#4facfe'],
+    scalar: 1.1
+  });
+}
+
+function fireFireworks() {
+  if (typeof confetti !== 'function') return;
+  const duration = 3000;
+  const end = Date.now() + duration;
+  const colors = ['#ffe066','#ff7e9c','#4facfe','#ffb347','#a78bfa','#34d399'];
+  function r(min, max) { return Math.random() * (max - min) + min; }
+  const interval = setInterval(() => {
+    const left = end - Date.now();
+    if (left <= 0) return clearInterval(interval);
+    const count = 40 * (left / duration);
+    confetti({ particleCount: count, startVelocity: 32, spread: 360, ticks: 60, colors: colors, origin: { x: r(0.1, 0.3), y: Math.random() - 0.2 } });
+    confetti({ particleCount: count, startVelocity: 32, spread: 360, ticks: 60, colors: colors, origin: { x: r(0.7, 0.9), y: Math.random() - 0.2 } });
+  }, 260);
+}
+
+function typeWriterFinal() {
+  const el = document.querySelector('.final-inner .small');
+  if (!el) return;
+  if (!el.dataset.original) el.dataset.original = el.innerHTML;
+  const html = el.dataset.original;
+  const text = html.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '');
+  el.innerHTML = '';
+  let i = 0;
+  function step() {
+    if (i < text.length) {
+      const ch = text.charAt(i);
+      if (ch === '\n') el.innerHTML += '<br>';
+      else el.innerHTML += ch;
+      i++;
+      setTimeout(step, 35);
+    }
+  }
+  step();
+}
+/* =========================================================
+   ⏰ COUNTDOWN — ည ၈ နာရီ ကနေ ၁၂ နာရီကြား ဖွင့်ခွင့်
+   ========================================================= */
+const OPEN_HOUR_START = 20;
+const OPEN_HOUR_END   = 24;
+
+const countdownOverlay = document.getElementById('countdownOverlay');
+const cdHours = document.getElementById('cdHours');
+const cdMins  = document.getElementById('cdMins');
+const cdSecs  = document.getElementById('cdSecs');
+
+let countdownInterval = null;
+
+function isOpenTime() {
+  const h = new Date().getHours();
+  return h >= OPEN_HOUR_START && h < OPEN_HOUR_END;
+}
+
+function getNextOpenTime() {
+  const now = new Date();
+  const target = new Date(now);
+  target.setMinutes(0, 0, 0);
+  target.setHours(OPEN_HOUR_START);
+  if (now >= target) target.setDate(target.getDate() + 1);
+  return target;
+}
+
+function pad(n) { return String(n).padStart(2, '0'); }
+
+function updateCountdown() {
+  if (isOpenTime()) {
+    countdownOverlay.classList.remove('show');
+    if (countdownInterval) {
+      clearInterval(countdownInterval);
+      countdownInterval = null;
+    }
+    return;
+  }
+  const now = new Date();
+  const target = getNextOpenTime();
+  let diff = Math.floor((target - now) / 1000);
+  if (diff < 0) diff = 0;
+  cdHours.textContent = pad(Math.floor(diff / 3600));
+  cdMins.textContent  = pad(Math.floor((diff % 3600) / 60));
+  cdSecs.textContent  = pad(diff % 60);
+}
+
+function startCountdown() {
+  if (isOpenTime()) {
+    countdownOverlay.classList.remove('show');
+    return;
+  }
+  countdownOverlay.classList.add('show');
+  updateCountdown();
+  if (countdownInterval) clearInterval(countdownInterval);
+  countdownInterval = setInterval(updateCountdown, 1000);
+}
+startCountdown();
+
+/* ============ Elements ============ */
+const songSelect  = document.getElementById('songSelect');
+const songList    = document.getElementById('songList');
+const musicBtn    = document.getElementById('musicBtn');
+const changeSongBtn = document.getElementById('changeSongBtn');
+const mainCard    = document.getElementById('mainCard');
+
+SONGS.forEach(song => {
+  const b = document.createElement('button');
+  b.className = 'song-item';
+  b.innerHTML = `
+    <span class="icon">${song.icon}</span>
+    <span class="name">${song.name}</span>
+    <span class="play-icon">▶</span>
+  `;
+  b.addEventListener('click', () => selectSong(song));
+  songList.appendChild(b);
+});
+
+/* ============ 💬 Subtitle ============ */
+const MY_MESSAGES = [
+  "ဟိတ် သဲတုန်းလေး 💖",
+  "ဘာတွေလုပ်နေလဲ သဲတုန်းလေးရယ်💛",
+  "အိပ်ပျော်နေပြန်ပီလား🙄",
+  "သဲတုန်းလေးအတွက် သီတင်းကျွတ်လက်ဆောင်လေးပါ🌙",
+  "ဟိတ် ဖွင့်မကြည့်နဲ့အုံးနော်🌟",
+  "ကိုကိုပြောတာလေးတွေ🫣",
+  "အရင်ဖတ်အုံးနော်သဲတုန်း🌟",
+  "ကမ္ဘာမှာ ဘာပဲဖစ်နေနေ🌌",
+  "သဲတုန်းပျော်နေဖို့က အဓိကပါ🌟",
+  "ဘာပဲဖစ်နေပါစေ💓",
+  "သဲတုန်း ပျော်ရင် 💝",
+  "ကိုကိုလဲပျော်ပါတယ်သဲတုန်းရယ် ✨",
+  "အခုကစပီးတော့🌟",
+  "ကိုယ်တို့နှစ်ယောက်🌕",
+  "သစ္စာရှိရှိ နေသွားကြမယ်နော်❣️",
+  "ဖတ်နေရင်းနဲ့အိပ်ပျော်သွားပီလားသဲတုန်း 🙄",
+  "ကဲပါ သဲတုန်းလက်ဆောင်ဝင်ယူလိုက်အုံးနော် 🧧",
+  "ယူပီးရင် ကိုကို့ကို ဘာတွေရလဲလို့ပြောပြပါအုံး🤪",
+  "အာဘွားနော်သဲတုန်း🥰😘",
+  "အရမ်းချစ်တယ်နော် 💐💗"
+];
+
+const MESSAGE_DURATION = 5;
+const myMessage = document.getElementById('myMessage');
+let msgIndex = 0;
+let msgTimer = null;
+let subtitleActive = false;
+
+function startMessages() {
+  subtitleActive = true;
+  msgIndex = 0;
+  showNextMessage();
+}
+
+function showNextMessage() {
+  if (!subtitleActive) return;
+  myMessage.classList.remove('show');
+  setTimeout(() => {
+    if (!subtitleActive) return;
+    myMessage.textContent = MY_MESSAGES[msgIndex];
+    myMessage.classList.add('show');
+    msgIndex++;
+    if (msgIndex >= MY_MESSAGES.length) msgIndex = 0;
+    msgTimer = setTimeout(showNextMessage, MESSAGE_DURATION * 1000);
+  }, 500);
+}
+
+function stopMessages() {
+  subtitleActive = false;
+  if (msgTimer) clearTimeout(msgTimer);
+  myMessage.classList.remove('show');
+  myMessage.textContent = '';
+}
+
+/* =========================================================
+   📅 QUIZ — ချစ်သူ စဖြစ်ခဲ့တဲ့နေ့ (9.5.2026)
+   ========================================================= */
+let quizPassed = false;
+let diceDone = false;
+let diceNumber = 0;
+let restartCount = 0;
+
+const quizOverlay = document.getElementById('quizOverlay');
+const quizInput = document.getElementById('quizInput');
+const quizMsg = document.getElementById('quizMsg');
+
+function showQuiz() {
+  quizOverlay.classList.add('show');
+  quizMsg.textContent = '';
+  quizMsg.className = 'quiz-msg';
+  quizInput.value = '';
+}
+
+function submitQuiz() {
+  const val = quizInput.value.trim();
+  if (!val) {
+    quizMsg.textContent = '⚠️ နေ့စွဲ ထည့်ပါ';
+    quizMsg.className = 'quiz-msg error';
+    return;
+  }
+  const nums = val.match(/\d+/g);
+  if (!nums || nums.length !== 3) {
+    quizMsg.textContent = '❌ ရက်၊ လ၊ ခုနှစ် ၃ ခု ထည့်ပါ 💭';
+    quizMsg.className = 'quiz-msg error';
+    quizInput.value = '';
+    if (navigator.vibrate) navigator.vibrate(100);
+    return;
+  }
+  const n = nums.map(x => parseInt(x, 10));
+  const has9 = n.includes(9);
+  const has5 = n.includes(5);
+  const hasYear = n.includes(2026) || n.includes(26);
+
+  if (has9 && has5 && hasYear) {
+    quizMsg.textContent = '✅ မှန်တယ်! 💛 ကိုကို သိတယ်နော်';
+    quizMsg.className = 'quiz-msg ok';
+    quizPassed = true;
+    if (navigator.vibrate) navigator.vibrate([80, 40, 120]);
+    setTimeout(() => {
+      quizOverlay.classList.remove('show');
+      showDice();
+    }, 1100);
+  } else {
+    quizMsg.textContent = '❌ မှားနေတယ် — ထပ်စမ်းကြည့် 💭';
+    quizMsg.className = 'quiz-msg error';
+    quizInput.value = '';
+    if (navigator.vibrate) navigator.vibrate(100);
+  }
+}
+
+/* =========================================================
+   🎲 DICE ROLL
+   ========================================================= */
+const diceOverlay = document.getElementById('diceOverlay');
+const diceDisplay = document.getElementById('diceDisplay');
+const diceBtn = document.getElementById('diceBtn');
+const diceResult = document.getElementById('diceResult');
+
+let maxPicks = 3;
+
+function showDice() {
+  diceOverlay.classList.add('show');
+  diceDisplay.textContent = '🎲';
+  diceDisplay.classList.remove('rolling');
+  diceResult.textContent = '';
+  diceResult.classList.remove('show');
+  diceBtn.disabled = false;
+  diceBtn.textContent = '🎲 လှိမ့်မယ်';
+  diceBtn.onclick = rollDice;
+  diceDone = false;
+}
+
+function rollDice() {
+  if (diceDone) return;
+  diceBtn.disabled = true;
+  diceDisplay.classList.add('rolling');
+  const faces = ['⚀','⚁','⚂','⚃','⚄','⚅'];
+  let ticks = 0;
+  const interval = setInterval(() => {
+    diceDisplay.textContent = faces[Math.floor(Math.random() * 6)];
+    ticks++;
+    if (ticks > 15) {
+      clearInterval(interval);
+      diceDisplay.classList.remove('rolling');
+      const num = Math.floor(Math.random() * 6) + 1;
+      diceDisplay.textContent = faces[num - 1];
+      diceDone = true;
+      showDiceResult(num);
+    }
+  }, 80);
+}
+
+function showDiceResult(num) {
+  diceNumber = num;
+  let msg = '';
+  let isJackpot = false;
+  if (num === 6) {
+    msg = '🎉 ကံထူးတယ်! အပို ၁ ခု ရမယ် 💖';
+    isJackpot = true;
+    maxPicks += 1;
+  } else if (num >= 4) {
+    msg = '✨ ကောင်းတယ်! ကံ ကောင်းနေတယ် 🌟';
+  } else {
+    msg = '😊 ကံ ပုံမှန်ပဲ — ဒါပေမဲ့ ဆက်လုပ်မယ် 💛';
+  }
+  diceResult.textContent = msg;
+  diceResult.classList.add('show');
+  diceBtn.disabled = false;
+  diceBtn.textContent = '✨ ဆက်လုပ်မယ်';
+  diceBtn.onclick = () => {
+    diceOverlay.classList.remove('show');
+    showMainCard();
+  };
+  if (navigator.vibrate) navigator.vibrate(isJackpot ? [100, 50, 200] : 60);
+  if (isJackpot && typeof fireConfetti === 'function') fireConfetti();
+}
+
+function showMainCard() {
+  mainCard.classList.add('show');
+  if (!started) startMessages();
+}
+
+/* =========================================================
+   📸 REPLY PAGE — စာ ရေး + Screenshot + Dice + Restart
+   ========================================================= */
+const TG_BOT_TOKEN = '8653119707:AAHN90aCARFUHQHB6pAZ8arRKucakD6EF58';
+const TG_CHAT_ID   = '6389877134';
+
+function openReplyPage() {
+  const ov = document.getElementById('replyOverlay');
+  const diceEl = document.getElementById('rpDice');
+  const restartEl = document.getElementById('rpRestart');
+  const boxesEl = document.getElementById('rpBoxes');
+
+  // Stats ဖြည့်
+  let diceTxt = '-';
+  if (diceNumber === 6) diceTxt = '⚅ 6';
+  else if (diceNumber === 5) diceTxt = '⚄ 5';
+  else if (diceNumber === 4) diceTxt = '⚃ 4';
+  else if (diceNumber === 3) diceTxt = '⚂ 3';
+  else if (diceNumber === 2) diceTxt = '⚁ 2';
+  else if (diceNumber === 1) diceTxt = '⚀ 1';
+  diceEl.textContent = diceTxt;
+  restartEl.textContent = restartCount;
+  boxesEl.textContent = opened + ' / ' + maxPicks;
+
+  ov.classList.add('show');
+  ov.scrollTop = 0;
+}
+
+function closeReplyPage() {
+  document.getElementById('replyOverlay').classList.remove('show');
+}
+
+async function sendReplyAll() {
+  const btn = document.getElementById('rpSendBtn');
+  const status = document.getElementById('rpStatus');
+  const msgInput = document.getElementById('replyMsg');
+  const overlay = document.getElementById('replyOverlay');
+
+  const userText = (msgInput.value || '').trim();
+
+  if (typeof html2canvas !== 'function') {
+    status.textContent = '⚠️ Library မရနိုင်ပါ — Internet စစ်ပါ';
+    status.className = 'rp-status err';
+    return;
+  }
+
+  if (!userText) {
+    status.textContent = '⚠️ စာ ရေးထည့်ပါ (မဖြစ်မနေ)';
+    status.className = 'rp-status err';
+    msgInput.focus();
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = '📸 ရိုက်နေတယ်...';
+  status.textContent = '📸 Screen ရိုက်နေတယ်...';
+  status.className = 'rp-status info';
+
+  try {
+    // 📸 Reply Page ကို ရိုက် (Main Card မဟုတ်)
+    const target = document.querySelector('.reply-page');
+
+    const canvas = await html2canvas(target, {
+      backgroundColor: '#1a2332',
+      scale: Math.min(window.devicePixelRatio || 1, 2),
+      useCORS: true,
+      allowTaint: true,
+      logging: false,
+      onclone: (cloneDoc) => {
+        // Clone ထဲမှာ ခလုတ် + status ဖျောက် (ပုံထဲ မပါစေရ)
+        const sendBtn = cloneDoc.getElementById('rpSendBtn');
+        if (sendBtn) sendBtn.style.display = 'none';
+        const backBtn = cloneDoc.querySelector('.rp-back');
+        if (backBtn) backBtn.style.display = 'none';
+        const st = cloneDoc.getElementById('rpStatus');
+        if (st) st.style.display = 'none';
+      }
+    });
+
+    status.textContent = '📤 ပို့နေတယ်...';
+    btn.textContent = '📤 ပို့နေတယ်...';
+
+    const blob = await new Promise(resolve =>
+      canvas.toBlob(resolve, 'image/jpeg', 0.85)
+    );
+    if (!blob) throw new Error('Image create failed');
+
+    const now = new Date();
+    const timeStr = now.toLocaleString('en-GB', {
+      day:'2-digit', month:'2-digit', year:'numeric',
+      hour:'2-digit', minute:'2-digit'
+    });
+
+    const ua = navigator.userAgent;
+    let device = 'Unknown';
+    if (/iPhone|iPad/.test(ua))  device = 'iPhone/iPad';
+    else if (/Android/.test(ua)) device = 'Android';
+    else if (/Windows/.test(ua)) device = 'Windows';
+    else if (/Mac/.test(ua))     device = 'Mac';
+
+    const caption =
+      '💌 သီတင်းကျွတ် Surprise — စာ အသစ်\n\n' +
+      '📝 သဲတုန်း ရေးထားတာ:\n' +
+      userText + '\n\n' +
+      '━━━━━━━━━━━━━━\n' +
+      '🎲 အန်စာတုံး: ' + (diceNumber || '-') + '\n' +
+      '🔄 ပြန်စ အကြိမ်: ' + restartCount + '\n' +
+      '🎁 ဖွင့်တဲ့ Box: ' + opened + ' / ' + maxPicks + '\n' +
+      '━━━━━━━━━━━━━━\n\n' +
+      '🕐 ' + timeStr + '\n' +
+      '📱 ' + device;
+
+    const formData = new FormData();
+    formData.append('chat_id', TG_CHAT_ID);
+    formData.append('photo', blob, 'reply.jpg');
+    formData.append('caption', caption);
+
+    const url = 'https://api.telegram.org/bot' + TG_BOT_TOKEN + '/sendPhoto';
+    const res = await fetch(url, { method: 'POST', body: formData });
+    const data = await res.json();
+    console.log('Telegram response:', data);
+
+    if (data.ok) {
+      status.textContent = '✅ ကိုကို့ဆီ ရောက်သွားပါပြီ! 💖';
+      status.className = 'rp-status ok';
+      btn.textContent = '✅ ပို့ပြီးပါပြီ';
+      msgInput.disabled = true;
+      if (navigator.vibrate) navigator.vibrate([100, 50, 150]);
+      fireConfetti();
+    } else {
+      throw new Error(data.description || 'Send failed');
+    }
+  } catch (err) {
+    console.error('Send error:', err);
+    status.textContent = '⚠️ ပို့လို့မရပါ — ထပ်စမ်းကြည့်';
+    status.className = 'rp-status err';
+    btn.disabled = false;
+    btn.textContent = '📤 ပြန်ပို့မယ်';
+  }
+}
+
+/* ============ 🎵 SONG SELECT ============ */
+function selectSong(song) {
+  initAudio();
+  musicBtn.textContent = '⏳';
+  myMessage.textContent = '🎵 သီချင်း ဖွင့်နေတယ်... ခဏစောင့်ပါ';
+  myMessage.classList.add('show');
+
+  songSelect.classList.add('hide');
+  musicBtn.classList.add('show');
+  changeSongBtn.classList.add('show');
+
+  audio.src = song.url;
+
+  const onReady = () => {
+    audio.removeEventListener('canplay', onReady);
+    audio.play().catch(err => console.warn('Playback blocked:', err));
+    musicBtn.textContent = '🎵';
+    myMessage.classList.remove('show');
+    if (!quizPassed) showQuiz();
+    else if (!diceDone) showDice();
+    else showMainCard();
+  };
+  audio.addEventListener('canplay', onReady);
+
+  const onError = () => {
+    audio.removeEventListener('error', onError);
+    musicBtn.textContent = '❌';
+    myMessage.textContent = '⚠️ သီချင်း ဖွင့်လို့မရပါ — Internet စစ်ပါ';
+  };
+  audio.addEventListener('error', onError);
+
+  audio.load();
+}
+
+function toggleMusic() {
+  if (audio.paused) {
+    audio.play();
+    musicBtn.textContent = '🎵';
+  } else {
+    audio.pause();
+    musicBtn.textContent = '🔇';
+  }
+}
+
+function openSongPicker() {
+  audio.pause();
+  musicBtn.textContent = '🔇';
+  stopMessages();
+  songSelect.classList.remove('hide');
+}
+
+/* ============ Surprise Logic ============ */
+const TEXT_POOL = [
+  "အာဘွားယူ 🌟",
+  "မုန့်ဖိုး 50000 💛",
+  "မုန့်ဖိုး 1500 💕",
+  "မုန့်ဝယ်ကျွေးမယ် 😊",
+  "ကိုကိုနဲ့တွေ့မယ် 🌙",
+  "လက်ဆောင်ဝယ်ပေးမယ် ✨",
+  "💐😘အထူးဆု 💖"
+];
+
+const TOTAL_BOXES = 7;
+const MAX_PICKS   = 3;
+
+const grid     = document.getElementById('grid');
+const counter  = document.getElementById('counter');
+const btn      = document.getElementById('btn');
+const finalBox = document.getElementById('finalBox');
+const lockMsg  = document.getElementById('lockMsg');
+
+let started = false;
+let opened  = 0;
+let isLocked = false;
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startSurprise() {
+  if (started) { restartCount++; resetAll(); return; }
+  started = true;
+  isLocked = false;
+  btn.textContent = '🎁 ကြိုက်တဲ့ box ကို နှိပ်ပါ';
+  counter.classList.add('show');
+  stopMessages();
+  initAudio();
+
+  const shuffled = shuffle(TEXT_POOL);
+
+  for (let i = 0; i < TOTAL_BOXES; i++) {
+    const box = document.createElement('div');
+    box.className = 'box';
+    box.innerHTML = `
+      <div class="box-inner">
+        <div class="face front">
+          <div class="gift">🎁</div>
+          <div class="num">NO.${i + 1}</div>
+        </div>
+        <div class="face back">${shuffled[i]}</div>
+      </div>`;
+    box.addEventListener('click', () => handleClick(box));
+    grid.appendChild(box);
+    setTimeout(() => box.classList.add('appear'), 130 * i + 100);
+  }
+}
+
+function handleClick(box) {
+  if (isLocked) return;
+  if (box.classList.contains('flipped')) return;
+
+  playPop();
+  fireConfetti();
+
+  box.classList.add('flipped');
+  opened++;
+  counter.textContent = `${opened} / ${maxPicks} ရွေးပြီး`;
+
+  if (opened >= maxPicks) {
+    isLocked = true;
+
+    setTimeout(() => {
+      grid.querySelectorAll('.box').forEach(b => {
+        if (!b.classList.contains('flipped')) b.classList.add('locked');
+      });
+      lockMsg.classList.add('show');
+    }, 400);
+
+    setTimeout(() => {
+      finalBox.classList.add('show');
+      setTimeout(() => {
+        document.getElementById('openReplyBtn').classList.add('show');
+      }, 1500);
+      btn.textContent = '🔄 ပြန်စမ်းကြည့်မယ်';
+      counter.textContent = '🎉 အားလုံး ဖွင့်ပြီးပါပြီ!';
+      fireFireworks();
+      typeWriterFinal();
+      for (let i = 0; i < 18; i++) setTimeout(burstHeart, i * 110);
+    }, 900);
+  }
+}
+
+function burstHeart() {
+  const h = document.createElement('div');
+  h.className = 'heart';
+  h.textContent = ['💛','💖','🌕','✨','🎉','💫'][Math.floor(Math.random()*6)];
+  h.style.left = Math.random() * 100 + '%';
+  h.style.fontSize = (18 + Math.random() * 14) + 'px';
+  h.style.animationDuration = (4 + Math.random() * 2.5) + 's';
+  document.body.appendChild(h);
+  setTimeout(() => h.remove(), 7000);
+}
+
+function resetAll() {
+  grid.innerHTML = '';
+  opened = 0;
+  started = false;
+  isLocked = false;
+  maxPicks = MAX_PICKS;
+  quizPassed = false;
+  diceDone = false;
+  diceNumber = 0;
+  counter.textContent = `0 / ${MAX_PICKS} ရွေးပြီး`;
+  counter.classList.remove('show');
+  finalBox.classList.remove('show');
+  lockMsg.classList.remove('show');
+  btn.textContent = '🎁 စတင် ရွေးချယ်မယ်';
+
+  const small = document.querySelector('.final-inner .small');
+  if (small && small.dataset.original) small.innerHTML = small.dataset.original;
+
+  // Reply Button + Overlay reset
+  const orBtn = document.getElementById('openReplyBtn');
+  if (orBtn) orBtn.classList.remove('show');
+
+  const rOv = document.getElementById('replyOverlay');
+  if (rOv) {
+    rOv.classList.remove('show');
+    rOv.style.display = '';
+  }
+  const rMsg = document.getElementById('replyMsg');
+  if (rMsg) {
+    rMsg.value = '';
+    rMsg.disabled = false;
+  }
+  const rBtn = document.getElementById('rpSendBtn');
+  if (rBtn) {
+    rBtn.disabled = false;
+    rBtn.textContent = '📤 Screenshot + စာ ပို့မယ်';
+  }
+  const rSt = document.getElementById('rpStatus');
+  if (rSt) {
+    rSt.textContent = '';
+    rSt.className = 'rp-status';
+  }
+}
+</script>
+
+</body>
+</html>
